@@ -54,7 +54,7 @@ namespace BuildProjectManager
 
         public bool IsActive { get; set; }
 
-        public abstract void CreateMenu();
+        public abstract void CreateMenu(); // Secondary constructor that can be called repeatedly to update the object instance
 
         public override void Select()
         {

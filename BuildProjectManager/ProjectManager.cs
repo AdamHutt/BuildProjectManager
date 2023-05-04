@@ -39,11 +39,12 @@ namespace BuildProjectManager
             int i = 0;
             foreach(Project p in Projects)
             {
+                if (p.transactions.Count < 1) { summary[i, 0] = p._id; continue; }
                 float[] s = p.ProjectSummary();
                 int j = 0;
                 foreach(float v in s)
                 {
-                    if(j != 0) { summary[Projects.Count + 1, j] += v; } // Add to total
+                    if(j != 0) { summary[Projects.Count, j] += v; } // Add to total
                     summary[i, j] = v;
                     j++;
                 }
@@ -57,18 +58,19 @@ namespace BuildProjectManager
     {
         const float VAT = 1.2f;
 
-        protected List<Transaction> transactions = new List<Transaction>();
+        public List<Transaction> transactions = new List<Transaction>();
         public int _id { get; private set; }
         public bool _isNewBuild;
 
         public Project(int id, bool isNewBuild)
         {
             _id = id;
+            _isNewBuild = isNewBuild;
         }
 
-        public void AddNewTransaction(Transaction t)
+        public void AddNewTransaction(float amount, char type)
         {
-            transactions.Add(t);
+            transactions.Add(new Transaction(amount, type));
         }
 
         public void RemoveExistingTransaction(Transaction t)
@@ -82,25 +84,24 @@ namespace BuildProjectManager
             summary[0] = _id; // Id
             foreach(Transaction t in transactions)
             {
-                if(t.type == Transaction.TRANSACTION_TYPE.Sale) { summary[1] += t.amount; } // Sales
-                else { summary[2] += t.amount; } // Purchase
+                if(t._type == 'S') { summary[1] += t._amount; } // Sales
+                else { summary[2] += t._amount; } // Purchase
             }
             if(_isNewBuild) { summary[3] = summary[2] - (summary[2] / VAT); } // Refund
-            summary[4] = (summary[2] - summary[3]) + summary[4]; // Profit
+            summary[4] = (summary[1] - summary[2]) + summary[3]; // Profit
             return summary;
         }
     }
 
     public class Transaction
     {
-        public enum TRANSACTION_TYPE
-        {
-            Sale = 'S',
-            Purchase = 'P',
-            Land = 'L',
-            Renovation = 'R'
+        public Transaction(float amount, char type) 
+        { 
+            _amount = amount;
+            _type = type;
         }
-        public TRANSACTION_TYPE type { get; private set; }
-        public float amount { get; private set; }
+        
+        public char _type { get; private set; }
+        public float _amount { get; private set; }
     }
 }
