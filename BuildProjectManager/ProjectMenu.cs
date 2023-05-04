@@ -17,7 +17,7 @@ namespace BuildProjectManager
         {
             _menuItems.Clear();
             _menuItems.Add(new AddProjectMenuItem(_projectManager));
-            _menuItems.Add(new LoadBeigeFileMenu(_projectManager));
+            _menuItems.Add(new LoadBeigeFileMenuItem(_projectManager));
             if(_projectManager.Projects.Count > 0)
             {
                 _menuItems.Add(new DisplayPortfolioSummaryMenuItem(_projectManager));
@@ -33,22 +33,31 @@ namespace BuildProjectManager
         }
     }
 
-    class LoadBeigeFileMenu : ConsoleMenu
+    class LoadBeigeFileMenuItem : MenuItem
     {
         private ProjectManager _projectManager;
-        public LoadBeigeFileMenu(ProjectManager projectManager)
+        public LoadBeigeFileMenuItem(ProjectManager projectManager)
         {
             _projectManager = projectManager;
-        }
-
-        public override void CreateMenu()
-        {
-
         }
 
         public override string MenuText()
         {
             return "Load Beige file from storage";
+        }
+
+        public override void Select()
+        {
+            string fileName;
+            Console.WriteLine($"Please place the file in {Directory.GetCurrentDirectory()}/BuildProjectInput/ and then enter the file name here (leave blank to return): ");
+            fileName = Console.ReadLine();
+            if (string.IsNullOrEmpty(fileName)) { return; }
+            
+            try
+            {
+                _projectManager.BeigeFileParser(fileName);
+            }
+            catch(Exception e) { Console.WriteLine(e.Message); return; }
         }
     }
 
