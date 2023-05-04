@@ -111,8 +111,9 @@ namespace BuildProjectManager
                                     AddTransactionD:
                                     foreach (Project p in importedProjects) // only reaches this code once all 3 values have been read
                                     {
-                                        if (p._id == temp.id) { p.AddNewTransaction(temp.amount, temp.type); goto SkipD; }
+                                        if (p._id == temp.id) { p.AddNewTransaction(temp.amount, temp.type); goto SkipD; } // goto SkipD is just a way of continuing the outer loop from within the nested loop
                                     }
+                                    if (temp.type != 'R' && temp.type != 'L') { Console.WriteLine("Error: transaction does not belong to existing project and is not eligible to start a new one"); return; }
                                     bool isNewBuild = false; // only reaches here if there is currently no project with the id
                                     if (temp.type == 'L') { isNewBuild = true; }
                                     importedProjects.Add(new Project(temp.id, isNewBuild)); // create new project with the id
@@ -161,8 +162,9 @@ namespace BuildProjectManager
                                     AddTransactionL:
                                     foreach (Project p in importedProjects) // only reaches this code once all 3 values have been read
                                     {
-                                        if (p._id == temp.id) { p.AddNewTransaction(temp.amount, temp.type); goto SkipL; }
+                                        if (p._id == temp.id) { p.AddNewTransaction(temp.amount, temp.type); goto SkipL; } // goto SkipL is just a way of continuing the outer loop from within the nested loop
                                     }
+                                    if (temp.type != 'R' && temp.type != 'L') { Console.WriteLine("Error: transaction does not belong to existing project and is not eligible to start a new one"); return; }
                                     bool isNewBuild = false; // only reaches here if there is currently no project with the id
                                     if (temp.type == 'L') { isNewBuild = true; }
                                     importedProjects.Add(new Project(temp.id, isNewBuild)); // create new project with the id
@@ -175,7 +177,6 @@ namespace BuildProjectManager
                             SkipL:;
                             }
                         }
-                        Console.WriteLine("Doing while...");
                     } while (!sr.EndOfStream);
                     foreach (Project p in importedProjects)
                     {
