@@ -45,16 +45,60 @@ namespace BuildProjectManager
         }
     }
 
-    class AddProjectMenu : ConsoleMenu
+    class AddProjectMenuItem : MenuItem
     {
-        public override void CreateMenu()
+        private ProjectManager _projectManager;
+        public AddProjectMenuItem(ProjectManager projectManager)
         {
-
+            _projectManager = projectManager;
         }
 
         public override string MenuText()
         {
             return "Add new project";
+        }
+
+        public override void Select() // Add new project
+        {
+            int id;
+            do // Input validation
+            {
+                Console.Write("Enter a project ID (Leave blank to return): ");
+                string strId = Console.ReadLine();
+                if (strId == "") { return; }
+                try
+                {
+                    id = int.Parse(strId);
+                }
+                catch (FormatException)
+                {
+                    Console.WriteLine("Please enter a valid integer.");
+                    continue;
+                }
+                break;
+            } while (true);
+            bool isNewBuild;
+            do // Input validation
+            {
+                Console.Write("Is this project a new build (VAT exempt)? Y/n or leave blank to return: ");
+                string strIsNewBuild = Console.ReadLine();
+                if (strIsNewBuild.ToUpper() == "Y") { isNewBuild = true; }
+                else if (strIsNewBuild == "N") { isNewBuild = false; }
+                else if (strIsNewBuild == "") { return; }
+                else { Console.WriteLine("Please enter Y/n or leave blank to return."); continue; }
+                break;
+            } while (true);
+            
+            try
+            {
+                _projectManager.AddNewProject(id, isNewBuild);
+            }
+            catch (ArgumentException e)
+            {
+                Console.WriteLine(e.Message);
+                return;
+            }
+            Console.WriteLine($"Successfully added a new project with id: {id}!");
         }
     }
 
@@ -68,6 +112,19 @@ namespace BuildProjectManager
         public override string MenuText()
         {
             return "Remove existing project";
+        }
+    }
+
+    class RemoveProjectMenuItem : MenuItem
+    {
+        public RemoveProjectMenuItem()
+        {
+
+        }
+
+        public override string MenuText()
+        {
+            throw new NotImplementedException();
         }
     }
 
